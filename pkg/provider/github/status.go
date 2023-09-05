@@ -190,9 +190,9 @@ func (v *Provider) getOrUpdateCheckRunStatus(ctx context.Context, tekton version
 	var found bool
 
 	// check if pipelineRun has the label with checkRun-id
+	_, isPip := statusOpts.PipelineRun.GetAnnotations()["tekton.dev/pipelineRun"]
 	if statusOpts.PipelineRun != nil {
 		var id string
-		_, isPip := statusOpts.PipelineRun.GetAnnotations()["tekton.dev/pipelineRun"]
 		id, found = statusOpts.PipelineRun.GetAnnotations()[keys.CheckRunID]
 		if !isPip && found {
 			checkID, err := strconv.Atoi(id)
@@ -202,7 +202,7 @@ func (v *Provider) getOrUpdateCheckRunStatus(ctx context.Context, tekton version
 			checkRunID = github.Int64(int64(checkID))
 		}
 	}
-	if !found {
+	if !found || isPip {
 		if checkRunID, _ = v.getExistingCheckRunID(ctx, runevent, statusOpts); checkRunID == nil {
 			checkRunID, err = v.createCheckRunStatus(ctx, runevent, pacopts, statusOpts)
 			if err != nil {
