@@ -192,8 +192,9 @@ func (v *Provider) getOrUpdateCheckRunStatus(ctx context.Context, tekton version
 	// check if pipelineRun has the label with checkRun-id
 	if statusOpts.PipelineRun != nil {
 		var id string
+		_, isPip := statusOpts.PipelineRun.GetAnnotations()["tekton.dev/pipelineRun"]
 		id, found = statusOpts.PipelineRun.GetAnnotations()[keys.CheckRunID]
-		if found {
+		if !isPip && found {
 			checkID, err := strconv.Atoi(id)
 			if err != nil {
 				return fmt.Errorf("api error: cannot convert checkrunid")
