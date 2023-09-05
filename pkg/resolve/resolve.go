@@ -116,6 +116,7 @@ func inlineTasks(tasks []tektonv1.PipelineTask, ropt *Opts, types Types) ([]tekt
 			task.TaskRef.Resolver == "" &&
 			isTektonAPIVersion(task.TaskRef.APIVersion) &&
 			string(task.TaskRef.Kind) != "ClusterTask" &&
+			string(task.TaskRef.Kind) != "Pipeline" &&
 			!skippingTask(task.TaskRef.Name, ropt.SkipInlining) {
 			taskResolved, err := getTaskByName(task.TaskRef.Name, types.Tasks)
 			if err != nil {
